@@ -45,7 +45,6 @@ public class DataManager : MonoBehaviour
         NewDirectory();
         SerializeXML();
         DeserializeXML();
-        //SerializeJSON();
         XMLtoJSON();
     }
 
@@ -107,16 +106,5 @@ public class DataManager : MonoBehaviour
 
     }
 
-     /*public void SerializeJSON()
-     {
-         Members.MemberList group = new Members.MemberList();
-         group.list = memberList;
-
-         string jsonString = JsonUtility.ToJson(group, true);
-
-         using (StreamWriter stream = File.CreateText (_jsonMembers))
-         {
-             stream.WriteLine(jsonString);
-         }
-     }*/
+     
 } 
