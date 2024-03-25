@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.RestService;
 
@@ -44,7 +45,7 @@ public class DataManager : MonoBehaviour
         NewDirectory();
         SerializeXML();
         DeserializeXML();
-        SerializeJSON();
+        //SerializeJSON();
     }
 
     public void NewDirectory()
@@ -60,46 +61,58 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void SerializeXML()
-    {
-        var xmlserializer = new XmlSerializer(typeof(List<Members>));
 
-        using (FileStream stream = File.Create(_xmlMembers))
-        {
-            xmlserializer.Serialize(stream, memberList);
-        }
+     public void SerializeXML()
+     {
+         var xmlserializer = new XmlSerializer(typeof(List<Members>));
+
+         using (FileStream stream = File.Create(_xmlMembers))
+         {
+             xmlserializer.Serialize(stream, memberList);
+         }
+     }
+
+     public void DeserializeXML()
+     {
+         if (File.Exists(_xmlMembers))
+         {
+             var xmlSerializer = new XmlSerializer(typeof(List<Members>));
+
+             using (FileStream stream = File.OpenRead(_xmlMembers))
+             {
+                 var members = (List<Members>)xmlSerializer.Deserialize(stream);
+
+                 foreach (var Members in members)
+                 {
+                     Debug.LogFormat(Members.name, Members.year, Members.color);
+
+                 }
+             }
+         }
+     }
+
+
+    public void XMLtoJSON()
+    {
+        XmlDocument xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml( _xmlMembers);
+        string jsonString = JsonConvert.SerializeXmlNode(xmlDocument);
+
+        File.WriteAllText(_jsonMembers, jsonString);
+        Debug.LogFormat("JSON file savet at " + _jsonMembers);
+
     }
 
-    public void DeserializeXML()
-    {
-        if (File.Exists(_xmlMembers))
-        {
-            var xmlSerializer = new XmlSerializer(typeof(List<Members>));
+     /*public void SerializeJSON()
+     {
+         Members.MemberList group = new Members.MemberList();
+         group.list = memberList;
 
-            using (FileStream stream = File.OpenRead(_xmlMembers))
-            {
-                var members = (List<Members>)xmlSerializer.Deserialize(stream);
+         string jsonString = JsonUtility.ToJson(group, true);
 
-                foreach (var Members in members)
-                {
-                    Debug.LogFormat(Members.name);
-                    //Debug.LogFormat(Members.year);
-                    Debug.LogFormat(Members.color);
-                }
-            }
-        }
-    }
-
-    public void SerializeJSON()
-    {
-        Members.MemberList group = new Members.MemberList();
-        group.list = memberList;
-
-        string jsonString = JsonUtility.ToJson(group, true);
-
-        using (StreamWriter stream = File.CreateText (_jsonMembers))
-        {
-            stream.WriteLine(jsonString);
-        }
-    }
-}
+         using (StreamWriter stream = File.CreateText (_jsonMembers))
+         {
+             stream.WriteLine(jsonString);
+         }
+     }*/
+} 
