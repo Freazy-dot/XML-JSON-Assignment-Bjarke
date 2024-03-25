@@ -46,6 +46,7 @@ public class DataManager : MonoBehaviour
         SerializeXML();
         DeserializeXML();
         //SerializeJSON();
+        XMLtoJSON();
     }
 
     public void NewDirectory()
@@ -84,7 +85,7 @@ public class DataManager : MonoBehaviour
 
                  foreach (var Members in members)
                  {
-                     Debug.LogFormat(Members.name, Members.year, Members.color);
+                    // Debug.LogFormat(Members.name, Members.year, Members.color);
 
                  }
              }
@@ -94,8 +95,11 @@ public class DataManager : MonoBehaviour
 
     public void XMLtoJSON()
     {
+
+        string xml = File.ReadAllText(_xmlMembers);
         XmlDocument xmlDocument = new XmlDocument();
-        xmlDocument.LoadXml( _xmlMembers);
+        xmlDocument.LoadXml(xml);
+        
         string jsonString = JsonConvert.SerializeXmlNode(xmlDocument);
 
         File.WriteAllText(_jsonMembers, jsonString);
